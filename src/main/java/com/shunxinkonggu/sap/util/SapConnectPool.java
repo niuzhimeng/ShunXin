@@ -10,11 +10,11 @@ import com.sap.mw.jco.JCO;
 
 public class SapConnectPool extends BaseBean {
 
-	private static String client = "801";           // 客户端 300
-	private static String user = "SAP-OA";          // 用户名 RFCUSER
-	private static String passwd = "123456";        // 密码   123456
+	private static String client = "300";           // 客户端 测试300 正式800
+	private static String user = "RFCUSER";          // 用户名
+	private static String passwd = "sap123456";        // 密码19920706
 	private static String lang = "ZH";              // 语言
-	private static String ashost = "172.16.0.34";  // 服务器的主机名
+	private static String ashost = "172.16.0.104";  // 服务器的主机名
 	private static String sysnr = "00";             // 系统
 	private static String sapRouter = "";        // SapRouter /H/saproute.shunxinholdings.com/H/
 
