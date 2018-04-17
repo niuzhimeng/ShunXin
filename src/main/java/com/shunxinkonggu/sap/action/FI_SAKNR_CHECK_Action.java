@@ -19,83 +19,94 @@ import com.sap.mw.jco.JCO;
  */
 public class FI_SAKNR_CHECK_Action extends BaseBean implements Action {
 
-	public String execute(RequestInfo request) {
+    public String execute(RequestInfo request) {
 
-		this.writeLog("FI_SAKNR_CHECK_Action start --- ");
+        this.writeLog("FI_SAKNR_CHECK_Action start --- ");
 
-		String isSuccess = BaseAction.SUCCESS;
-		String requestid = request.getRequestid();
-		String operatetype = request.getRequestManager().getSrc();
-		String fromTable = request.getRequestManager().getBillTableName();
+        String isSuccess = BaseAction.SUCCESS;
+        String requestid = request.getRequestid();
+        String operatetype = request.getRequestManager().getSrc();
+        String fromTable = request.getRequestManager().getBillTableName();
 
-		this.writeLog("FI_SAKNR_CHECK_Action 会计科目(集团层)  CHECK 科目编码 requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+        this.writeLog("FI_SAKNR_CHECK_Action 会计科目(集团层)  CHECK 科目编码 requestid --- " + requestid + "  operatetype --- " + operatetype + "   fromTable --- " + fromTable);
 
-		if(operatetype.equals("submit")){
+        if (operatetype.equals("submit")) {
 
-			String SAKNR = "";            // 会计科目编码
-			String KTOKS = "";   		  // 科目组
+            String SAKNR = "";            // 会计科目编码
+            String KTOKS = "";          // 科目组
 
-			RecordSet rs = new RecordSet();
-			SapConnectPool connect = null;
-			JCO.Client client = null;
+            RecordSet rs = new RecordSet();
+            SapConnectPool connect = null;
+            JCO.Client client = null;
 
-			try {
+            try {
 
-				this.writeLog("FI_SAKNR_CHECK_Action fromTable --- " + fromTable);
+                this.writeLog("FI_SAKNR_CHECK_Action fromTable --- " + fromTable);
 
-				JCO.Function function = null;
-				JCO.Repository repository = null;
-				IFunctionTemplate ft = null;
-				connect = new SapConnectPool();
-				client = connect.getConnection();
-				repository = new JCO.Repository("sap", client);
-				ft = repository.getFunctionTemplate("ZRFC_FI_SAKNR_CHECK");
-				function = new JCO.Function(ft);
+                JCO.Function function = null;
+                JCO.Repository repository = null;
+                IFunctionTemplate ft = null;
+                connect = new SapConnectPool();
+                client = connect.getConnection();
+                repository = new JCO.Repository("sap", client);
+                ft = repository.getFunctionTemplate("ZRFC_FI_SAKNR_CHECK_B");
+                function = new JCO.Function(ft);
 
-				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
-				if (rs.next()) {
-					SAKNR = Util.null2String(rs.getString("kjkmbm"));
-					KTOKS = Util.null2String(rs.getString("kmz"));
-					this.writeLog("FI_SAKNR_CHECK_Action SAKNR --- " + SAKNR);
-					this.writeLog("FI_SAKNR_CHECK_Action KTOKS --- " + KTOKS);
-				}
+                rs.execute("SELECT d.* FROM " + fromTable + " m LEFT JOIN " + fromTable + "_DT1" + " d ON m.id = d.MAINID WHERE m.REQUESTID = " + requestid);
+                JCO.Table table = function.getImportParameterList().getTable("IT_SAKNR");
+                int i = 0;
+                while (rs.next()) {
+                    SAKNR = Util.null2String(rs.getString("kjkmbm"));
+                    KTOKS = Util.null2String(rs.getString("kmz"));
 
-				//if(KTOKS.equals("C001") || KTOKS.equals("C002")){
+                    table.appendRow();
+                    table.setRow(i);
+                    table.setValue(SAKNR, "SAKNR");
+                    i++;
 
-				function.getImportParameterList().setValue(SAKNR, "I_SAKNR");
-				client.execute(function);
+                    this.writeLog("FI_SAKNR_CHECK_Action SAKNR --- " + SAKNR);
+                    this.writeLog("FI_SAKNR_CHECK_Action KTOKS --- " + KTOKS);
+                }
+                client.execute(function);
 
-				String result = Util.null2String(function.getExportParameterList().getValue("E_MSGTY"));
-				String message = Util.null2String(function.getExportParameterList().getValue("E_MSGTX"));
+                //处理返回数据
+                JCO.Table resultTable = function.getTableParameterList().getTable("ET_SAKNR");
+                int length = resultTable.getNumRows();
+                StringBuilder builder = new StringBuilder();
+                for (int j = 0; j < length; j++) {
+                    resultTable.setRow(j);
+                    // 如果包含E或A 则失败
+                    if ("E".equals(resultTable.getString("MSGTY")) || "A".equals(resultTable.getString("MSGTY"))) {
+                        builder.append(resultTable.getString("SAKNR")).append("： ").append(resultTable.getString("MSGTX")).append("</br>");
+                    }
+                }
 
-				if ("E".equals(result) || "A".equals(result)) {// 如果包含E或A 则失败
-					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("sap返回错误：--- " + message);
-					return isSuccess;
-				}
-				//}
-
-
-				this.writeLog("FI_SAKNR_CHECK_Action end --- ");
-			} catch (Exception e) {
-				this.writeLog("FI_SAKNR_CHECK_Action Exception:" + e);
-				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("返回错误："+e);
-				return isSuccess;
-			} finally {
-				try {
-					// client.disconnect();
-					connect.disConnection();
-					client = null;
-				} catch (Exception e) {
-					e.printStackTrace();
-					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("返回错误：与SAP连接异常，请重新提交流程！"+e);
-					return isSuccess;
-				}
-			}
-		}
-		return isSuccess;
-	}
+                //说明有表中有N行错误
+                if (builder.length() > 0) {
+                    request.getRequestManager().setMessageid("10000");
+                    request.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
+                }
+                this.writeLog("FI_SAKNR_CHECK_Action end --- ");
+                return isSuccess;
+            } catch (Exception e) {
+                this.writeLog("FI_SAKNR_CHECK_Action Exception:" + e);
+                request.getRequestManager().setMessageid("10000");
+                request.getRequestManager().setMessagecontent("返回错误：" + e);
+                return isSuccess;
+            } finally {
+                try {
+                    // client.disconnect();
+                    connect.disConnection();
+                    client = null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.getRequestManager().setMessageid("10000");
+                    request.getRequestManager().setMessagecontent("返回错误：与SAP连接异常，请重新提交流程！" + e);
+                    return isSuccess;
+                }
+            }
+        }
+        return isSuccess;
+    }
 
 }
