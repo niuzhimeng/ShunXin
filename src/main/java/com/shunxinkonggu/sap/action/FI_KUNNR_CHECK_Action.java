@@ -67,12 +67,16 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
                     this.writeLog("FI_KUNNR_CHECK_Action khzhz --- " + khzhz);
                     i++;
                 }
+                writeLog("执行调用中======================");
                 client.execute(function);
+                writeLog("调用完毕======================");
 
                 //处理返回数据
-                int tabLength = function.getTableParameterList().getTabLength();
-                writeLog("返回长度======80" + tabLength);
-                JCO.Table resultTable = function.getTableParameterList().getTable("ET_KUNNR");
+                JCO.Table resultTable = function.getExportParameterList().getTable("ET_KUNNR");
+
+                writeLog("行客户返回check===============" + resultTable);
+                int tabLength = resultTable.getTabLength();
+                writeLog("返回长度======79" + tabLength);
                 int length = resultTable.getNumRows();
                 writeLog("81返回总行数=============" + length);
                 StringBuilder builder = new StringBuilder();

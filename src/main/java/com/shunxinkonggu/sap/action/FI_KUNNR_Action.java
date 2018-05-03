@@ -48,7 +48,7 @@ public class FI_KUNNR_Action extends BaseBean implements Action {
             IFunctionTemplate ft = null;
             try {
 
-                this.writeLog("FI_KUNNR_Action fromTable --- " + fromTable);
+                this.writeLog("FI_KUNNR_Action fromTable ================================= " + fromTable);
 
                 connect = new SapConnectPool();
                 client = connect.getConnection();
@@ -95,7 +95,7 @@ public class FI_KUNNR_Action extends BaseBean implements Action {
                 client.execute(function);
 
                 //处理返回数据
-                JCO.Table resultTable = function.getTableParameterList().getTable("ET_KNA1");
+                JCO.Table resultTable = function.getExportParameterList().getTable("ET_KNA1");
                 int length = resultTable.getNumRows();
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < length; j++) {
@@ -112,7 +112,7 @@ public class FI_KUNNR_Action extends BaseBean implements Action {
                     request.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
                 }
 
-                this.writeLog("FI_KUNNR_Action end --- ");
+                this.writeLog("FI_KUNNR_Action end =================================");
                 return isSuccess;
             } catch (Exception e) {
                 this.writeLog("FI_KUNNR_Action Exception:" + e);

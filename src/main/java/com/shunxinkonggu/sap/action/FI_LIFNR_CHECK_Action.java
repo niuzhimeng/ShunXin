@@ -20,7 +20,7 @@ public class FI_LIFNR_CHECK_Action extends BaseBean implements Action {
 
     public String execute(RequestInfo request) {
 
-        this.writeLog("FI_LIFNR_CHECK_Action start --- ");
+        this.writeLog("FI_LIFNR_CHECK_Action start ================================= ");
 
         String isSuccess = BaseAction.SUCCESS;
         String requestid = request.getRequestid();
@@ -69,14 +69,12 @@ public class FI_LIFNR_CHECK_Action extends BaseBean implements Action {
                         i++;
                     }
                 }
+                writeLog("调用SAP中。。。。。。");
                 client.execute(function);
+                writeLog("调用结束。。。。。。。");
 
                 //处理返回数据
-                if (function.getTableParameterList() == null || function.getTableParameterList().getTabLength() <= 0) {
-                    request.getRequestManager().setMessageid("10000");
-                    request.getRequestManager().setMessagecontent("SAP返回为空，请联系系统管理员");
-                }
-                JCO.Table resultTable = function.getTableParameterList().getTable("ET_LIFNR");
+                JCO.Table resultTable = function.getExportParameterList().getTable("ET_LIFNR");
                 int length = resultTable.getNumRows();
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < length; j++) {

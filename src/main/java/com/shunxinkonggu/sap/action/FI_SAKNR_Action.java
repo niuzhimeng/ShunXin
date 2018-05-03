@@ -21,7 +21,7 @@ public class FI_SAKNR_Action extends BaseBean implements Action {
 
     public String execute(RequestInfo request) {
 
-        this.writeLog("FI_SAKNR_Action start --- ");
+        this.writeLog("FI_SAKNR_Action start ================================= ");
 
         String isSuccess = BaseAction.SUCCESS;
         String requestid = request.getRequestid();
@@ -63,12 +63,12 @@ public class FI_SAKNR_Action extends BaseBean implements Action {
                 while (rs.next()) {
 
                     SAKNR = Util.null2String(rs.getString("kjkmbm"));
-                    GLACCOUNT_TYPE = Util.null2String(rs.getString("Accounttype"));
+                    GLACCOUNT_TYPE = Util.null2String(rs.getString("kmlx"));
                     KTOKS = Util.null2String(rs.getString("kmz"));
                     TXT50 = Util.null2String(rs.getString("zzkmcwb"));
                     TXT20 = Util.null2String(rs.getString("zzkmdwb"));
                     GVTYP = Util.null2String(rs.getString("sybkmlx"));
-                    KTOPL = Util.null2String(rs.getString("zmb"));
+                    KTOPL = Util.null2String(rs.getString("zmz"));
 
                     table.appendRow();
                     table.setRow(i);
@@ -89,10 +89,12 @@ public class FI_SAKNR_Action extends BaseBean implements Action {
                     this.writeLog("FI_SAKNR_Action GVTYP --- " + GVTYP);
                     this.writeLog("FI_SAKNR_Action KTOPL --- " + KTOPL);
                 }
+                writeLog("调用sap中-----");
                 client.execute(function);
+                writeLog("调用结束-------");
 
                 //处理返回数据
-                JCO.Table resultTable = function.getTableParameterList().getTable("ET_SKAT");
+                JCO.Table resultTable = function.getExportParameterList().getTable("ET_SKAT");
                 int length = resultTable.getNumRows();
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < length; j++) {
@@ -108,7 +110,7 @@ public class FI_SAKNR_Action extends BaseBean implements Action {
                     request.getRequestManager().setMessageid("10000");
                     request.getRequestManager().setMessagecontent("sap返回消息：--- " + builder.toString());
                 }
-                this.writeLog("FI_SAKNR_Action end --- ");
+                this.writeLog("FI_SAKNR_Action end ================================= ");
             } catch (Exception e) {
                 this.writeLog("FI_SAKNR_Action Exception:" + e);
                 request.getRequestManager().setMessageid("10000");

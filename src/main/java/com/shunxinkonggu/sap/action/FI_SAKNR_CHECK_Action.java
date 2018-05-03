@@ -45,16 +45,17 @@ public class FI_SAKNR_CHECK_Action extends BaseBean implements Action {
 
                 JCO.Function function = null;
                 JCO.Repository repository = null;
-                IFunctionTemplate ft = null;
                 connect = new SapConnectPool();
                 client = connect.getConnection();
                 repository = new JCO.Repository("sap", client);
-                ft = repository.getFunctionTemplate("ZRFC_FI_SAKNR_CHECK_B");
+                IFunctionTemplate ft  = repository.getFunctionTemplate("ZRFC_FI_SAKNR_CHECK_B");
                 function = new JCO.Function(ft);
 
+                writeLog("执行sql=============================");
                 rs.execute("SELECT d.* FROM " + fromTable + " m LEFT JOIN " + fromTable + "_DT1" + " d ON m.id = d.MAINID WHERE m.REQUESTID = " + requestid);
                 JCO.Table table = function.getImportParameterList().getTable("IT_SAKNR");
                 int i = 0;
+                writeLog("开始执行while=======================");
                 while (rs.next()) {
                     SAKNR = Util.null2String(rs.getString("kjkmbm"));
                     KTOKS = Util.null2String(rs.getString("kmz"));
@@ -67,10 +68,12 @@ public class FI_SAKNR_CHECK_Action extends BaseBean implements Action {
                     this.writeLog("FI_SAKNR_CHECK_Action SAKNR --- " + SAKNR);
                     this.writeLog("FI_SAKNR_CHECK_Action KTOKS --- " + KTOKS);
                 }
+                writeLog("调用sqp中----");
                 client.execute(function);
+                writeLog("调用结束----");
 
                 //处理返回数据
-                JCO.Table resultTable = function.getTableParameterList().getTable("ET_SAKNR");
+                JCO.Table resultTable = function.getExportParameterList().getTable("ET_SAKNR");
                 int length = resultTable.getNumRows();
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < length; j++) {
