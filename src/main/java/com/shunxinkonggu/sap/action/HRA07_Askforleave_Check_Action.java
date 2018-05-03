@@ -12,57 +12,57 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * Ô±¹¤Çë¼Ù
- * 
- * @author ÁõêÊ
- * 
+ * å‘˜å·¥è¯·å‡
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class HRA07_Askforleave_Check_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("HRA07_Askforleave_Check_Action start --- ");
-		
+
 		String startendnodeids = "1015,1022";
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
 		String workflowid = request.getWorkflowid();
-		//»ñÈ¡²Ù×÷ÀàÐÍ   save(±£´æ) reject(ÍË»Ø) submit(Ìá½») delete(É¾³ý) 
-		String operatetype = request.getRequestManager().getSrc();     
+		//èŽ·å–æ“ä½œç±»åž‹   save(ä¿å­˜) reject(é€€å›ž) submit(æäº¤) delete(åˆ é™¤)
+		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("HRA07_Askforleave_Check_Action Ô±¹¤Çë¼Ù¼ì²é requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("HRA07_Askforleave_Check_Action å‘˜å·¥è¯·å‡æ£€æŸ¥ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String pernr = ""; // ÈËÔ±±àÂë
+
+			String pernr = ""; // äººå‘˜ç¼–ç 
 			RecordSet rs = null;
-			
+
 			try {
-				
+
 				this.writeLog("HRA07_Askforleave_Check_Action fromTable --- " + fromTable);
-				
+
 				rs = new RecordSet();
 				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
 				if (rs.next()) {
-					
+
 					pernr = Util.null2String(rs.getString("yggh"));
 					this.writeLog("HRA07_Askforleave_Check_Action pernr --- " + pernr);
-					
-					//ÅÐ¶ÏÊÇ·ñÓÐÕýÔÚÉóÅúÖÐµÄÄê¼ÙÁ÷³Ì 
+
+					//åˆ¤æ–­æ˜¯å¦æœ‰æ­£åœ¨å®¡æ‰¹ä¸­çš„å¹´å‡æµç¨‹
 					if(getWorkflowDataIsExit(workflowid,startendnodeids,"yggh",pernr,"qjlxbm","'2000','2001','2002'")){
 						request.getRequestManager().setMessageid("10000");
-						request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÄúÓÐÎ´ÉóÅú½áÊøµÄÄê¼ÙÉêÇëµ¥£¬²»ÄÜ·¢ÆðÐÂµÄÄê¼ÙÉêÇë£¡");
+						request.getRequestManager().setMessagecontent("è¿”å›žé”™è¯¯ï¼šæ‚¨æœ‰æœªå®¡æ‰¹ç»“æŸçš„å¹´å‡ç”³è¯·å•ï¼Œä¸èƒ½å‘èµ·æ–°çš„å¹´å‡ç”³è¯·ï¼");
 						return isSuccess;
 					}
-					
+
 				}
 				this.writeLog("HRA07_Askforleave_Check_Action end --- ");
 
 			} catch (Exception e) {
 				this.writeLog("HRA07_Askforleave_Check_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›žé”™è¯¯ï¼š"+e);
 				return isSuccess;
 			}
 		}
@@ -70,18 +70,18 @@ public class HRA07_Askforleave_Check_Action extends BaseBean implements Action {
 	}
 
 	/***
-	 * »ñÈ¡Á÷³ÌÊÇ·ñÒÑ¾­´æÔÚ£¬³ýÈ¥½ÚµãÒÔÍâµÄÊý¾Ý
-	 * @param tablename ±íÃû
-	 * @param code	±àÂë
+	 * èŽ·å–æµç¨‹æ˜¯å¦å·²ç»å­˜åœ¨ï¼Œé™¤åŽ»èŠ‚ç‚¹ä»¥å¤–çš„æ•°æ®
+	 * @param tablename è¡¨å
+	 * @param code	ç¼–ç 
 	 * @return
 	 */
-	//¸ù¾Ý±íÃûºÍ valueÖµ  ºÍ keyÖµ£¨²»Í¬value¶ÔÓ¦²»Í¬keyÖµ£©£¬·µ»Ø²é³öµÄ  id£¨¸Ã±íid£©tablename
+	//æ ¹æ®è¡¨åå’Œ valueå€¼  å’Œ keyå€¼ï¼ˆä¸åŒvalueå¯¹åº”ä¸åŒkeyå€¼ï¼‰ï¼Œè¿”å›žæŸ¥å‡ºçš„  idï¼ˆè¯¥è¡¨idï¼‰tablename
 	public static boolean getWorkflowDataIsExit( String workflowid, String nodeids, String fieldname, String fieldvalue, String fieldname1, String fieldvalue1) {
-		
+
 		RecordSet rs = null;
 		boolean returnValue = false;
 		String tablename = "";
-		
+
 		try {
 			rs = new RecordSet();
 			rs.executeSql("select tablename from workflow_bill wbill,workflow_base wbase where wbill.id = wbase.formid and wbase.id = "+workflowid);
@@ -89,7 +89,7 @@ public class HRA07_Askforleave_Check_Action extends BaseBean implements Action {
 				tablename = Util.null2String(rs.getString("tablename"));
 			}
 			if(tablename.length() > 0){
-				rs.executeSql("select id from "+tablename+" where requestid not in (select requestid from workflow_requestbase where workflowid = "+workflowid+" and currentnodeid in ("+nodeids+")) and "+fieldname+" = '"+fieldvalue+"' and "+fieldname1+" in ("+fieldvalue1+") ");  
+				rs.executeSql("select id from "+tablename+" where requestid not in (select requestid from workflow_requestbase where workflowid = "+workflowid+" and currentnodeid in ("+nodeids+")) and "+fieldname+" = '"+fieldvalue+"' and "+fieldname1+" in ("+fieldvalue1+") ");
 				if (rs.next()) {
 					//tablename = Util.null2String(rs.getString("tablename"));
 					returnValue = true;
@@ -98,11 +98,11 @@ public class HRA07_Askforleave_Check_Action extends BaseBean implements Action {
 					returnValue = false;
 				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return returnValue;
 	}
-	
+
 }

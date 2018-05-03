@@ -12,45 +12,45 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * Ô±¹¤µ÷¶¯
- * 
- * @author ÁõêÊ
- * 
+ * å‘˜å·¥è°ƒåŠ¨
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class HRA05_Reassignment_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("HRA05_Reassignment_Action start --- ");
-		
+
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
-		String operatetype = request.getRequestManager().getSrc();     
+		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("HRA05_Reassignment_Action Ô±¹¤µ÷¶¯ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("HRA05_Reassignment_Action å‘˜å·¥è°ƒåŠ¨ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String I_PERNR = "";   // ÈËÔ±±àÂë
-			String I_BEGDA = "";   // µ÷¶¯ÉúĞ§ÈÕÆÚ
-			String I_BEGDA1 = "";  // ¹¤×ÊºËËãÈÕÆÚ
-			String I_OBJID1 = "";  // µ÷³ö²¿ÃÅID
-			String I_STEXT1 = "";  // µ÷³ö²¿ÃÅÎÄ±¾
-			String I_OBJID2 = "";  // µ÷³öµ¥Î»ID
-			String I_STEXT2 = "";  // µ÷³öµ¥Î»ÎÄ±¾
-			String I_OBJID3 = "";  // µ÷Èë²¿ÃÅID
-			String I_STEXT3 = "";  // µ÷Èë²¿ÃÅÎÄ±¾
-			String I_OBJID4 = "";  // µ÷Èëµ¥Î»ID
-			String I_STEXT4 = "";  // µ÷Èëµ¥Î»ÎÄ±¾
-			String I_PLANS1 = "";  // Ô­¸ÚÎ»ID
-			String I_STEXT5 = "";  // Ô­¸ÚÎ»ÎÄ±¾
-			String I_PLANS2 = "";  // ÏÖ¸ÚÎ»ID
-			String I_STEXT6 = "";  // ÏÖ¸ÚÎ»ÎÄ±¾
-			String I_PERSG = "";   // Ô±¹¤×é
-			String I_PERSK = "";   // Ô±¹¤×Ó×é£º01£¬02
-			String I_MASSG = "";   // µ÷¶¯Ô­Òò£¨ 01£¬02£¬03, 04£©
-			
+
+			String I_PERNR = "";   // äººå‘˜ç¼–ç 
+			String I_BEGDA = "";   // è°ƒåŠ¨ç”Ÿæ•ˆæ—¥æœŸ
+			String I_BEGDA1 = "";  // å·¥èµ„æ ¸ç®—æ—¥æœŸ
+			String I_OBJID1 = "";  // è°ƒå‡ºéƒ¨é—¨ID
+			String I_STEXT1 = "";  // è°ƒå‡ºéƒ¨é—¨æ–‡æœ¬
+			String I_OBJID2 = "";  // è°ƒå‡ºå•ä½ID
+			String I_STEXT2 = "";  // è°ƒå‡ºå•ä½æ–‡æœ¬
+			String I_OBJID3 = "";  // è°ƒå…¥éƒ¨é—¨ID
+			String I_STEXT3 = "";  // è°ƒå…¥éƒ¨é—¨æ–‡æœ¬
+			String I_OBJID4 = "";  // è°ƒå…¥å•ä½ID
+			String I_STEXT4 = "";  // è°ƒå…¥å•ä½æ–‡æœ¬
+			String I_PLANS1 = "";  // åŸå²—ä½ID
+			String I_STEXT5 = "";  // åŸå²—ä½æ–‡æœ¬
+			String I_PLANS2 = "";  // ç°å²—ä½ID
+			String I_STEXT6 = "";  // ç°å²—ä½æ–‡æœ¬
+			String I_PERSG = "";   // å‘˜å·¥ç»„
+			String I_PERSK = "";   // å‘˜å·¥å­ç»„ï¼š01ï¼Œ02
+			String I_MASSG = "";   // è°ƒåŠ¨åŸå› ï¼ˆ 01ï¼Œ02ï¼Œ03, 04ï¼‰
+
 			RecordSet rs = null;
 			SapConnectPool connect = null;
 			JCO.Client client = null;
@@ -58,19 +58,19 @@ public class HRA05_Reassignment_Action extends BaseBean implements Action {
 			JCO.Repository repository = null;
 			IFunctionTemplate ft = null;
 			try {
-				
+
 				this.writeLog("HRA05_Reassignment_Action fromTable --- " + fromTable);
-	
+
 				connect = new SapConnectPool();
 				client = connect.getConnection();
 				repository = new JCO.Repository("sap", client);
 				ft = repository.getFunctionTemplate("ZRFC_HR_HRA05_UPDATE");
 				function = new JCO.Function(ft);
-				
+
 				rs = new RecordSet();
 				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
 				if (rs.next()) {
-					
+
 					I_PERNR = Util.null2String(rs.getString("ddrybh"));
 					I_BEGDA = Util.null2String(rs.getString("ddrq"));
 					I_BEGDA1 = Util.null2String(rs.getString("gzhsrq"));
@@ -89,10 +89,10 @@ public class HRA05_Reassignment_Action extends BaseBean implements Action {
 					I_PERSG = Util.null2String(rs.getString("ygzbm"));
 					I_PERSK = Util.null2String(rs.getString("ygzzbm"));
 					I_MASSG = Util.null2String(rs.getString("ddyybm"));
-					
+
 					I_BEGDA = I_BEGDA.replace("-", "");
 					I_BEGDA1 = I_BEGDA1.replace("-", "");
-					
+
 					this.writeLog("HRA05_Reassignment_Action I_PERNR --- " + I_PERNR);
 					this.writeLog("HRA05_Reassignment_Action I_BEGDA --- " + I_BEGDA);
 					this.writeLog("HRA05_Reassignment_Action I_BEGDA1 --- " + I_BEGDA1);
@@ -110,11 +110,11 @@ public class HRA05_Reassignment_Action extends BaseBean implements Action {
 					this.writeLog("HRA05_Reassignment_Action I_STEXT6 --- " + I_STEXT6);
 					this.writeLog("HRA05_Reassignment_Action I_PERSG --- " + I_PERSG);
 					this.writeLog("HRA05_Reassignment_Action I_PERSK --- " + I_PERSK);
-					
+
 					this.writeLog("HRA05_Reassignment_Action I_MASSG --- " + I_MASSG);
-					
+
 				}
-				
+
 				function.getImportParameterList().setValue(I_PERNR, "I_PERNR");
 				function.getImportParameterList().setValue(I_BEGDA, "I_BEGDA");
 				function.getImportParameterList().setValue(I_OBJID1, "I_OBJID1");
@@ -133,12 +133,12 @@ public class HRA05_Reassignment_Action extends BaseBean implements Action {
 				function.getImportParameterList().setValue(I_PERSK, "I_PERSK");
 				function.getImportParameterList().setValue(I_BEGDA1, "I_BEGDA1");
 				function.getImportParameterList().setValue(I_MASSG, "I_MASSG");
-				
+
 				client.execute(function);
 				JCO.Table table = function.getTableParameterList().getTable("RETURN");
-				
-				this.writeLog("HRA05_Reassignment_Action ÍÆËÍ½á¹û --- " + table.getNumRows());
-				
+
+				this.writeLog("HRA05_Reassignment_Action æ¨é€ç»“æœ --- " + table.getNumRows());
+
 				boolean flag = false;
 				String resultArry = "";
 				String messageArry = "";
@@ -146,29 +146,29 @@ public class HRA05_Reassignment_Action extends BaseBean implements Action {
 					table.setRow(i);
 					String result = Util.null2String(table.getString("TYPE"));
 					String message = Util.null2String(table.getString("MESSAGE"));
-					
+
 					this.writeLog("HRA05_Reassignment_Action result --- " + result + " message --- " + message);
-					
-					if ("E".equals(result) || "A".equals(result)) {// Èç¹û°üº¬E»òA ÔòÊ§°Ü
+
+					if ("E".equals(result) || "A".equals(result)) {// å¦‚æœåŒ…å«Eæˆ–A åˆ™å¤±è´¥
 						flag = true;
 						messageArry += ";  " + message;
 						resultArry += ";  " + result;
 					}
 				}
-	
+
 				this.writeLog("HRA05_Reassignment_Action result --- " + resultArry);
 				this.writeLog("HRA05_Reassignment_Action message --- " + messageArry);
 				if (flag) {
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("sap·µ»Ø´íÎó£ºÏûÏ¢ÄÚÈİ---" + messageArry);
+					request.getRequestManager().setMessagecontent("sapè¿”å›é”™è¯¯ï¼šæ¶ˆæ¯å†…å®¹---" + messageArry);
 					return isSuccess;
 				}
-	
+
 				this.writeLog("HRA05_Reassignment_Action end --- ");
 			} catch (Exception e) {
 				this.writeLog("HRA05_Reassignment_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼š"+e);
 				return isSuccess;
 			} finally {
 				try {
@@ -178,12 +178,12 @@ public class HRA05_Reassignment_Action extends BaseBean implements Action {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÓëSAPÁ¬½ÓÒì³££¬ÇëÖØĞÂÌá½»Á÷³Ì£¡"+e);
+					request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼šä¸SAPè¿æ¥å¼‚å¸¸ï¼Œè¯·é‡æ–°æäº¤æµç¨‹ï¼"+e);
 					return isSuccess;
 				}
 			}
 		}
 		return isSuccess;
 	}
-	
+
 }

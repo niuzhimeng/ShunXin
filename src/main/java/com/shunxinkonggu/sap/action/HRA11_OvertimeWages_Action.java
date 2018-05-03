@@ -12,32 +12,32 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * Ô±¹¤¼Ó°à¹¤×Ê
- * 
- * @author ÁõêÊ
- * 
+ * å‘˜å·¥åŠ ç­å·¥èµ„
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class HRA11_OvertimeWages_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("HRA11_OvertimeWages_Action start --- ");
-		
+
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
 		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("HRA11_OvertimeWages_Action Ô±¹¤¼Ó°à¹¤×Ê requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("HRA11_OvertimeWages_Action å‘˜å·¥åŠ ç­å·¥èµ„ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String pernr = "";  // ÈËÔ±±àÂë
-			String jbgzyf = ""; // ¼Ó°à¹¤×ÊÔÂ·İ
-			//String wtxts = "";  // Î´µ÷ĞİÌìÊı
-			String jbgz = "";   // ¼Ó°à¹¤×Ê
-			
-			
+
+			String pernr = "";  // äººå‘˜ç¼–ç 
+			String jbgzyf = ""; // åŠ ç­å·¥èµ„æœˆä»½
+			//String wtxts = "";  // æœªè°ƒä¼‘å¤©æ•°
+			String jbgz = "";   // åŠ ç­å·¥èµ„
+
+
 			RecordSet rs = null;
 			SapConnectPool connect = null;
 			JCO.Client client = null;
@@ -45,23 +45,23 @@ public class HRA11_OvertimeWages_Action extends BaseBean implements Action {
 			JCO.Repository repository = null;
 			IFunctionTemplate ft = null;
 			try {
-				
+
 				this.writeLog("HRA11_OvertimeWages_Action fromTable --- " + fromTable);
-	
+
 				connect = new SapConnectPool();
 				client = connect.getConnection();
 				repository = new JCO.Repository("sap", client);
 				ft = repository.getFunctionTemplate("ZRFC_HR_HRA11_UPDATE");
 				function = new JCO.Function(ft);
-				
+
 				rs = new RecordSet();
 				rs.execute("select * from " + fromTable + "_dt1 where mainid in (select id from " + fromTable + " where requestid =" + requestid+")");
-				
+
 				int itempbc = 0;
 				JCO.Table jiabandetail = function.getTableParameterList().getTable("IT_HRA11");
-				
+
 				while (rs.next()) {
-					
+
 					pernr = Util.null2String(rs.getString("gh"));
 					int yf = (rs.getInt("ssyf")*1+1);
 					if(yf<10){
@@ -72,12 +72,12 @@ public class HRA11_OvertimeWages_Action extends BaseBean implements Action {
 					}
 					//wtxts = Util.null2String(rs.getString("wtxts"));
 					jbgz = Util.null2String(rs.getString("hsje"));
-	
+
 					this.writeLog("HRA11_OvertimeWages_Action pernr --- " + pernr);
 					this.writeLog("HRA11_OvertimeWages_Action jbgzyf --- " + jbgzyf);
 					//this.writeLog("HRA11_OvertimeWages_Action wtxts --- " + wtxts);
 					this.writeLog("HRA11_OvertimeWages_Action jbgz --- " + jbgz);
-					
+
 					jiabandetail.appendRow();
 					jiabandetail.setRow(itempbc);
 					jiabandetail.setValue(pernr,"PERNR");
@@ -86,12 +86,12 @@ public class HRA11_OvertimeWages_Action extends BaseBean implements Action {
 					jiabandetail.setValue(jbgz, "BETRG");
 					itempbc++;
 				}
-				
+
 				client.execute(function);
 				JCO.Table table = function.getTableParameterList().getTable("RETURN");
-				
-				this.writeLog("HRA11_OvertimeWages_Action ÍÆËÍ½á¹û --- " + table.getNumRows());
-				
+
+				this.writeLog("HRA11_OvertimeWages_Action æ¨é€ç»“æœ --- " + table.getNumRows());
+
 				boolean flag = false;
 				String resultArry = "";
 				String messageArry = "";
@@ -99,29 +99,29 @@ public class HRA11_OvertimeWages_Action extends BaseBean implements Action {
 					table.setRow(i);
 					String result = Util.null2String(table.getString("TYPE"));
 					String message = Util.null2String(table.getString("MESSAGE"));
-					
+
 					this.writeLog("HRA11_OvertimeWages_Action result --- " + result + " message --- " + message);
-					
-					if ("E".equals(result) || "A".equals(result)) {// Èç¹û°üº¬E»òA ÔòÊ§°Ü
+
+					if ("E".equals(result) || "A".equals(result)) {// å¦‚æœåŒ…å«Eæˆ–A åˆ™å¤±è´¥
 						flag = true;
 						messageArry += ";  " + message;
 						resultArry += ";  " + result;
 					}
 				}
-	
+
 				this.writeLog("HRA11_OvertimeWages_Action result --- " + resultArry);
 				this.writeLog("HRA11_OvertimeWages_Action message --- " + messageArry);
 				if (flag) {
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("sap·µ»Ø´íÎó£ºÏûÏ¢ÄÚÈİ---" + messageArry);
+					request.getRequestManager().setMessagecontent("sapè¿”å›é”™è¯¯ï¼šæ¶ˆæ¯å†…å®¹---" + messageArry);
 					return isSuccess;
 				}
-	
+
 				this.writeLog("HRA11_OvertimeWages_Action end --- ");
 			} catch (Exception e) {
 				this.writeLog("HRA11_OvertimeWages_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼š"+e);
 				return isSuccess;
 			} finally {
 				try {
@@ -131,12 +131,12 @@ public class HRA11_OvertimeWages_Action extends BaseBean implements Action {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÓëSAPÁ¬½ÓÒì³££¬ÇëÖØĞÂÌá½»Á÷³Ì£¡"+e);
+					request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼šä¸SAPè¿æ¥å¼‚å¸¸ï¼Œè¯·é‡æ–°æäº¤æµç¨‹ï¼"+e);
 					return isSuccess;
 				}
 			}
 		}
 		return isSuccess;
 	}
-	
+
 }

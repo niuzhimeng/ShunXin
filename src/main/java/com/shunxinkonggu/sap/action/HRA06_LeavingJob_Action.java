@@ -12,34 +12,34 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * Ô±¹¤ÀëÖ°
- * 
- * @author ÁõêÊ
- * 
+ * å‘˜å·¥ç¦»èŒ
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("HRA06_LeavingJob_Action start --- ");
-		
+
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
-		String operatetype = request.getRequestManager().getSrc();     
+		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("HRA06_LeavingJob_Action Ô±¹¤ÀëÖ° requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("HRA06_LeavingJob_Action å‘˜å·¥ç¦»èŒ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String I_PERNR = "";   // ÈËÔ±±àÂë
-			String I_BEGDA = "";   // ºË¶¨ÀëÖ°ÈÕÆÚ
-			String I_PERSG = "";   // Ô±¹¤×é
-			String I_PERSK = "";   // Ô±¹¤×Ó×é
-			String I_ZHTZDLX = ""; // ºÏÍ¬ÖĞ¶ÏÀàĞÍ
-			String I_ZHTJCYY = ""; // ºÏÍ¬½â³ıÔ­Òò
-			String I_MASSG = "";   // ÀëÖ°Ô­Òò
-			
+
+			String I_PERNR = "";   // äººå‘˜ç¼–ç 
+			String I_BEGDA = "";   // æ ¸å®šç¦»èŒæ—¥æœŸ
+			String I_PERSG = "";   // å‘˜å·¥ç»„
+			String I_PERSK = "";   // å‘˜å·¥å­ç»„
+			String I_ZHTZDLX = ""; // åˆåŒä¸­æ–­ç±»å‹
+			String I_ZHTJCYY = ""; // åˆåŒè§£é™¤åŸå› 
+			String I_MASSG = "";   // ç¦»èŒåŸå› 
+
 			RecordSet rs = null;
 			SapConnectPool connect = null;
 			JCO.Client client = null;
@@ -47,19 +47,19 @@ public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 			JCO.Repository repository = null;
 			IFunctionTemplate ft = null;
 			try {
-				
+
 				this.writeLog("HRA06_LeavingJob_Action fromTable --- " + fromTable);
-	
+
 				connect = new SapConnectPool();
 				client = connect.getConnection();
 				repository = new JCO.Repository("sap", client);
 				ft = repository.getFunctionTemplate("ZRFC_HR_HRA06_UPDATE");
 				function = new JCO.Function(ft);
-				
+
 				rs = new RecordSet();
 				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
 				if (rs.next()) {
-					
+
 					I_PERNR = Util.null2String(rs.getString("gh"));
 					I_BEGDA = Util.null2String(rs.getString("hdlzrq"));
 					I_PERSG = Util.null2String(rs.getString("ygzbm"));
@@ -67,9 +67,9 @@ public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 					I_ZHTZDLX = Util.null2String(rs.getString("htzdlxbm"));
 					I_ZHTJCYY = Util.null2String(rs.getString("htjcyybm"));
 					I_MASSG = Util.null2String(rs.getString("lzyybm"));
-					
+
 					I_BEGDA = I_BEGDA.replace("-", "");
-					
+
 					this.writeLog("HRA06_LeavingJob_Action I_PERNR --- " + I_PERNR);
 					this.writeLog("HRA06_LeavingJob_Action I_BEGDA --- " + I_BEGDA);
 					this.writeLog("HRA06_LeavingJob_Action I_PERSG --- " + I_PERSG);
@@ -77,9 +77,9 @@ public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 					this.writeLog("HRA06_LeavingJob_Action I_ZHTZDLX --- " + I_ZHTZDLX);
 					this.writeLog("HRA06_LeavingJob_Action I_ZHTJCYY --- " + I_ZHTJCYY);
 					this.writeLog("HRA06_LeavingJob_Action I_MASSG --- " + I_MASSG);
-					
+
 				}
-				
+
 				function.getImportParameterList().setValue(I_PERNR, "I_PERNR");
 				function.getImportParameterList().setValue(I_BEGDA, "I_BEGDA");
 				function.getImportParameterList().setValue(I_PERSG, "I_PERSG");
@@ -87,12 +87,12 @@ public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 				function.getImportParameterList().setValue(I_ZHTZDLX, "I_ZHTZDLX");
 				function.getImportParameterList().setValue(I_ZHTJCYY, "I_ZHTJCYY");
 				function.getImportParameterList().setValue(I_MASSG, "I_MASSG");
-				
+
 				client.execute(function);
 				JCO.Table table = function.getTableParameterList().getTable("RETURN");
-				
-				this.writeLog("HRA06_LeavingJob_Action ÍÆËÍ½á¹û --- " + table.getNumRows());
-				
+
+				this.writeLog("HRA06_LeavingJob_Action æ¨é€ç»“æœ --- " + table.getNumRows());
+
 				boolean flag = false;
 				String resultArry = "";
 				String messageArry = "";
@@ -100,29 +100,29 @@ public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 					table.setRow(i);
 					String result = Util.null2String(table.getString("TYPE"));
 					String message = Util.null2String(table.getString("MESSAGE"));
-					
+
 					this.writeLog("HRA06_LeavingJob_Action result --- " + result + " message --- " + message);
-					
-					if ("E".equals(result) || "A".equals(result)) {// Èç¹û°üº¬E»òA ÔòÊ§°Ü
+
+					if ("E".equals(result) || "A".equals(result)) {// å¦‚æœåŒ…å«Eæˆ–A åˆ™å¤±è´¥
 						flag = true;
 						messageArry += ";  " + message;
 						resultArry += ";  " + result;
 					}
 				}
-	
+
 				this.writeLog("HRA06_LeavingJob_Action result --- " + resultArry);
 				this.writeLog("HRA06_LeavingJob_Action message --- " + messageArry);
 				if (flag) {
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("sap·µ»Ø´íÎó£ºÏûÏ¢ÄÚÈİ---" + messageArry);
+					request.getRequestManager().setMessagecontent("sapè¿”å›é”™è¯¯ï¼šæ¶ˆæ¯å†…å®¹---" + messageArry);
 					return isSuccess;
 				}
-	
+
 				this.writeLog("HRA06_LeavingJob_Action end --- ");
 			} catch (Exception e) {
 				this.writeLog("HRA06_LeavingJob_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼š"+e);
 				return isSuccess;
 			} finally {
 				try {
@@ -132,12 +132,12 @@ public class HRA06_LeavingJob_Action extends BaseBean implements Action {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÓëSAPÁ¬½ÓÒì³££¬ÇëÖØĞÂÌá½»Á÷³Ì£¡"+e);
+					request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼šä¸SAPè¿æ¥å¼‚å¸¸ï¼Œè¯·é‡æ–°æäº¤æµç¨‹ï¼"+e);
 					return isSuccess;
 				}
 			}
 		}
 		return isSuccess;
 	}
-	
+
 }

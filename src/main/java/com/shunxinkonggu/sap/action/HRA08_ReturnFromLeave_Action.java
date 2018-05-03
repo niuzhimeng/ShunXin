@@ -12,33 +12,33 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * Ô±¹¤Ïú¼Ù
- * 
- * @author ÁõêÊ
- * 
+ * å‘˜å·¥é”€å‡
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class HRA08_ReturnFromLeave_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("HRA08_ReturnFromLeave_Action start --- ");
-		
+
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
 		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("HRA08_ReturnFromLeave_Action Ô±¹¤Ïú¼Ù requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("HRA08_ReturnFromLeave_Action å‘˜å·¥é”€å‡ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String pernr = ""; // ÈËÔ±±àÂë
-			String qqdlx = ""; // Ïú¼ÙÀàĞÍ±àÂë
-			String qqdbd = ""; // ¿ªÊ¼ÈÕÆÚ
-			String qqded = ""; // ½áÊøÈÕÆÚ
-			String qqdbt = ""; // ¿ªÊ¼Ê±¼ä
-			String qqdet = ""; // ½áÊøÊ±¼ä
-			
+
+			String pernr = ""; // äººå‘˜ç¼–ç 
+			String qqdlx = ""; // é”€å‡ç±»å‹ç¼–ç 
+			String qqdbd = ""; // å¼€å§‹æ—¥æœŸ
+			String qqded = ""; // ç»“æŸæ—¥æœŸ
+			String qqdbt = ""; // å¼€å§‹æ—¶é—´
+			String qqdet = ""; // ç»“æŸæ—¶é—´
+
 			RecordSet rs = null;
 			SapConnectPool connect = null;
 			JCO.Client client = null;
@@ -46,50 +46,50 @@ public class HRA08_ReturnFromLeave_Action extends BaseBean implements Action {
 			JCO.Repository repository = null;
 			IFunctionTemplate ft = null;
 			try {
-				
+
 				this.writeLog("HRA08_ReturnFromLeave_Action fromTable --- " + fromTable);
-	
+
 				connect = new SapConnectPool();
 				client = connect.getConnection();
 				repository = new JCO.Repository("sap", client);
 				ft = repository.getFunctionTemplate("ZRFC_HR_HRA08_UPDATE");
 				function = new JCO.Function(ft);
-				
+
 				rs = new RecordSet();
 				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
 				if (rs.next()) {
-					
+
 					pernr = Util.null2String(rs.getString("yggh"));
 					qqdlx = changeQjlx(Util.null2String(rs.getString("xjlxbm")));
 					qqdbd = Util.null2String(rs.getString("qjrq"));
 					qqded = Util.null2String(rs.getString("xjrq"));
 					qqdbt = Util.null2String(rs.getString("jtsj1"));
 					qqdet = Util.null2String(rs.getString("jtsj2"));
-					
+
 					qqdbd = qqdbd.replace("-", "");
 					qqded = qqded.replace("-", "");
-	
+
 					this.writeLog("HRA08_ReturnFromLeave_Action pernr --- " + pernr);
 					this.writeLog("HRA08_ReturnFromLeave_Action qqdlx --- " + qqdlx);
 					this.writeLog("HRA08_ReturnFromLeave_Action qqdbd --- " + qqdbd);
 					this.writeLog("HRA08_ReturnFromLeave_Action qqded --- " + qqded);
 					this.writeLog("HRA08_ReturnFromLeave_Action qqdbt --- " + qqdbt);
 					this.writeLog("HRA08_ReturnFromLeave_Action qqdet --- " + qqdet);
-					
+
 				}
-				
+
 				function.getImportParameterList().setValue(pernr, "I_PERNR");
 				function.getImportParameterList().setValue(qqdlx, "I_AWART");
 				function.getImportParameterList().setValue(qqdbd, "I_BEGDA");
 				function.getImportParameterList().setValue(qqded, "I_ENDDA");
 				function.getImportParameterList().setValue(qqdbt, "I_FLAG1");
 				function.getImportParameterList().setValue(qqdet, "I_FLAG2");
-				
+
 				client.execute(function);
 				JCO.Table table = function.getTableParameterList().getTable("RETURN");
-				
-				this.writeLog("HRA08_ReturnFromLeave_Action ÍÆËÍ½á¹û --- " + table.getNumRows());
-				
+
+				this.writeLog("HRA08_ReturnFromLeave_Action æ¨é€ç»“æœ --- " + table.getNumRows());
+
 				boolean flag = false;
 				String resultArry = "";
 				String messageArry = "";
@@ -97,29 +97,29 @@ public class HRA08_ReturnFromLeave_Action extends BaseBean implements Action {
 					table.setRow(i);
 					String result = Util.null2String(table.getString("TYPE"));
 					String message = Util.null2String(table.getString("MESSAGE"));
-					
+
 					this.writeLog("HRA08_ReturnFromLeave_Action result --- " + result + " message --- " + message);
-					
-					if ("E".equals(result) || "A".equals(result)) {// Èç¹û°üº¬E»òA ÔòÊ§°Ü
+
+					if ("E".equals(result) || "A".equals(result)) {// å¦‚æœåŒ…å«Eæˆ–A åˆ™å¤±è´¥
 						flag = true;
 						messageArry += ";  " + message;
 						resultArry += ";  " + result;
 					}
 				}
-	
+
 				this.writeLog("HRA08_ReturnFromLeave_Action result --- " + resultArry);
 				this.writeLog("HRA08_ReturnFromLeave_Action message --- " + messageArry);
 				if (flag) {
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("sap·µ»Ø´íÎó£ºÏûÏ¢ÄÚÈİ---" + messageArry);
+					request.getRequestManager().setMessagecontent("sapè¿”å›é”™è¯¯ï¼šæ¶ˆæ¯å†…å®¹---" + messageArry);
 					return isSuccess;
 				}
-	
+
 				this.writeLog("HRA08_ReturnFromLeave_Action end --- ");
 			} catch (Exception e) {
 				this.writeLog("HRA08_ReturnFromLeave_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼š"+e);
 				return isSuccess;
 			} finally {
 				try {
@@ -129,7 +129,7 @@ public class HRA08_ReturnFromLeave_Action extends BaseBean implements Action {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÓëSAPÁ¬½ÓÒì³££¬ÇëÖØĞÂÌá½»Á÷³Ì£¡"+e);
+					request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼šä¸SAPè¿æ¥å¼‚å¸¸ï¼Œè¯·é‡æ–°æäº¤æµç¨‹ï¼"+e);
 					return isSuccess;
 				}
 			}
@@ -141,12 +141,12 @@ public class HRA08_ReturnFromLeave_Action extends BaseBean implements Action {
 
 //		String resultID = "";
 //		if ("0".equals(yuanID)) {
-//			resultID = "A001";// Äê¼Ù
+//			resultID = "A001";// å¹´å‡
 //		} else if ("1".equals(yuanID)) {
-//			resultID = "A002";// Ì½Ç×¼Ù
+//			resultID = "A002";// æ¢äº²å‡
 //		}
 		return yuanID;
 
 	}
-	
+
 }

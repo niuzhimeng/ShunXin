@@ -12,31 +12,31 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * Ô±¹¤×ªÕı
- * 
- * @author ÁõêÊ
- * 
+ * å‘˜å·¥è½¬æ­£
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class HRA04_BeingRegular_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("HRA04_BeingRegular_Action start --- ");
-		
+
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
-		String operatetype = request.getRequestManager().getSrc();     
+		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("HRA04_BeingRegular_Action Ô±¹¤×ªÕı requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("HRA04_BeingRegular_Action å‘˜å·¥è½¬æ­£ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String pernr = "";  // ÈËÔ±±àÂë
-			String zzyy = "";   // ×ªÕıÔ­Òò
-			String ygzz = "";   // Ô±¹¤×Ó×é
-			String sqzzrq = ""; // ÉêÇë×ªÕıÈÕÆÚ
-			
+
+			String pernr = "";  // äººå‘˜ç¼–ç 
+			String zzyy = "";   // è½¬æ­£åŸå› 
+			String ygzz = "";   // å‘˜å·¥å­ç»„
+			String sqzzrq = ""; // ç”³è¯·è½¬æ­£æ—¥æœŸ
+
 			RecordSet rs = null;
 			SapConnectPool connect = null;
 			JCO.Client client = null;
@@ -44,74 +44,74 @@ public class HRA04_BeingRegular_Action extends BaseBean implements Action {
 			JCO.Repository repository = null;
 			IFunctionTemplate ft = null;
 			try {
-				
+
 				this.writeLog("HRA04_BeingRegular_Action fromTable --- " + fromTable);
-	
+
 				connect = new SapConnectPool();
 				client = connect.getConnection();
 				repository = new JCO.Repository("sap", client);
 				ft = repository.getFunctionTemplate("ZRFC_HR_HRA04_UPDATE");
 				function = new JCO.Function(ft);
-				
+
 				rs = new RecordSet();
 				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
 				if (rs.next()) {
-					
+
 					pernr = Util.null2String(rs.getString("sqrbm"));
 					zzyy = Util.null2String(rs.getString("zzyybm"));
 					ygzz = Util.null2String(rs.getString("ygzzbm"));
 					sqzzrq = Util.null2String(rs.getString("zzrq"));
-					
+
 					sqzzrq = sqzzrq.replace("-", "");
-					
+
 					this.writeLog("HRA04_BeingRegular_Action pernr --- " + pernr);
 					this.writeLog("HRA04_BeingRegular_Action zzyy --- " + zzyy);
 					this.writeLog("HRA04_BeingRegular_Action ygzz --- " + ygzz);
 					this.writeLog("HRA04_BeingRegular_Action sqzzrq --- " + sqzzrq);
-					
+
 				}
-				
+
 				function.getImportParameterList().setValue(pernr, "I_PERNR");
 				function.getImportParameterList().setValue(zzyy, "I_MASSG");
 				function.getImportParameterList().setValue(ygzz, "I_PERSK");
 				function.getImportParameterList().setValue(sqzzrq, "I_BEGDA");
-				
+
 				client.execute(function);
 				JCO.Table table = function.getTableParameterList().getTable("RETURN");
-				
+
 				boolean flag = false;
 				String resultArry = "";
 				String messageArry = "";
-				
-				this.writeLog("HRA04_BeingRegular_Action ÍÆËÍ½á¹û --- " + table.getNumRows());
-				
+
+				this.writeLog("HRA04_BeingRegular_Action æ¨é€ç»“æœ --- " + table.getNumRows());
+
 				for (int i = 0; i < table.getNumRows(); i++) {
 					table.setRow(i);
 					String result = Util.null2String(table.getString("TYPE"));
 					String message = Util.null2String(table.getString("MESSAGE"));
-					
+
 					this.writeLog("HRA04_BeingRegular_Action result --- " + result + " message --- " + message);
-					
-					if ("E".equals(result) || "A".equals(result)) {// Èç¹û°üº¬E»òA ÔòÊ§°Ü
+
+					if ("E".equals(result) || "A".equals(result)) {// å¦‚æœåŒ…å«Eæˆ–A åˆ™å¤±è´¥
 						flag = true;
 						messageArry += ";  " + message;
 						resultArry += ";  " + result;
 					}
 				}
-	
+
 				this.writeLog("HRA04_BeingRegular_Action result --- " + resultArry);
 				this.writeLog("HRA04_BeingRegular_Action message --- " + messageArry);
 				if (flag) {
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("sap·µ»Ø´íÎó£ºÏûÏ¢ÄÚÈİ---" + messageArry);
+					request.getRequestManager().setMessagecontent("sapè¿”å›é”™è¯¯ï¼šæ¶ˆæ¯å†…å®¹---" + messageArry);
 					return isSuccess;
 				}
-	
+
 				this.writeLog("HRA04_BeingRegular_Action end --- ");
 			} catch (Exception e) {
 				this.writeLog("HRA04_BeingRegular_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼š"+e);
 				return isSuccess;
 			} finally {
 				try {
@@ -121,12 +121,12 @@ public class HRA04_BeingRegular_Action extends BaseBean implements Action {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÓëSAPÁ¬½ÓÒì³££¬ÇëÖØĞÂÌá½»Á÷³Ì£¡"+e);
+					request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼šä¸SAPè¿æ¥å¼‚å¸¸ï¼Œè¯·é‡æ–°æäº¤æµç¨‹ï¼"+e);
 					return isSuccess;
 				}
 			}
 		}
 		return isSuccess;
 	}
-	
+
 }

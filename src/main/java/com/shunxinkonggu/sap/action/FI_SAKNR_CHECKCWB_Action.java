@@ -12,37 +12,37 @@ import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 
 /***
- * »á¼Æ¿ÆÄ¿(¼¯ÍÅ²ã)  CHECK  ¿ÆÄ¿³¤ÎÄ±¾
- * 
- * @author ÁõêÊ
- * 
+ * ä¼šè®¡ç§‘ç›®(é›†å›¢å±‚)  CHECK  ç§‘ç›®é•¿æ–‡æœ¬
+ *
+ * @author åˆ˜æ™”
+ *
  */
 public class FI_SAKNR_CHECKCWB_Action extends BaseBean implements Action {
 
 	public String execute(RequestInfo request) {
 
 		this.writeLog("FI_SAKNR_CHECKCWB_Action start --- ");
-		
+
 		String isSuccess = BaseAction.SUCCESS;
 		String requestid = request.getRequestid();
-		String operatetype = request.getRequestManager().getSrc();     
+		String operatetype = request.getRequestManager().getSrc();
 		String fromTable = request.getRequestManager().getBillTableName();
-		
-		this.writeLog("FI_SAKNR_CHECKCWB_Action »á¼Æ¿ÆÄ¿(¼¯ÍÅ²ã)  CHECK ¿ÆÄ¿³¤ÎÄ±¾ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
-		
+
+		this.writeLog("FI_SAKNR_CHECKCWB_Action ä¼šè®¡ç§‘ç›®(é›†å›¢å±‚)  CHECK ç§‘ç›®é•¿æ–‡æœ¬ requestid --- "+requestid+"  operatetype --- "+operatetype+"   fromTable --- "+fromTable);
+
 		if(operatetype.equals("submit")){
-			
-			String SAKNR = "";            // »á¼Æ¿ÆÄ¿³¤ÎÄ±¾
-			String KTOKS = "";   		  // ¿ÆÄ¿×é
-			
+
+			String SAKNR = "";            // ä¼šè®¡ç§‘ç›®é•¿æ–‡æœ¬
+			String KTOKS = "";   		  // ç§‘ç›®ç»„
+
 			RecordSet rs = new RecordSet();
 			SapConnectPool connect = null;
 			JCO.Client client = null;
-			
+
 			try {
-				
+
 				this.writeLog("FI_SAKNR_CHECKCWB_Action fromTable --- " + fromTable);
-				
+
 				JCO.Function function = null;
 				JCO.Repository repository = null;
 				IFunctionTemplate ft = null;
@@ -51,7 +51,7 @@ public class FI_SAKNR_CHECKCWB_Action extends BaseBean implements Action {
 				repository = new JCO.Repository("sap", client);
 				ft = repository.getFunctionTemplate("ZIFFM_INBOUND_OA_OA07");
 				function = new JCO.Function(ft);
-				
+
 				rs.execute("select * from " + fromTable + " where requestid = " + requestid);
 				if (rs.next()) {
 					SAKNR = Util.null2String(rs.getString("zzkmcwb"));
@@ -59,28 +59,28 @@ public class FI_SAKNR_CHECKCWB_Action extends BaseBean implements Action {
 					this.writeLog("FI_SAKNR_CHECKCWB_Action SAKNR --- " + SAKNR);
 					this.writeLog("FI_SAKNR_CHECKCWB_Action KTOKS --- " + KTOKS);
 				}
-				
+
 				//if(KTOKS.equals("C001") || KTOKS.equals("C002")){
-					
-					function.getImportParameterList().setValue(SAKNR, "I_TXT50");   
-					client.execute(function);
-					
-					String result = Util.null2String(function.getExportParameterList().getValue("E_MSGTY"));
-					String message = Util.null2String(function.getExportParameterList().getValue("E_MSGTX"));
-		
-					if ("E".equals(result) || "A".equals(result)) {// Èç¹û°üº¬E»òA ÔòÊ§°Ü
-						request.getRequestManager().setMessageid("10000");
-						request.getRequestManager().setMessagecontent("sap·µ»Ø´íÎó£º--- " + message);
-						return isSuccess;
-					}
+
+				function.getImportParameterList().setValue(SAKNR, "I_TXT50");
+				client.execute(function);
+
+				String result = Util.null2String(function.getExportParameterList().getValue("E_MSGTY"));
+				String message = Util.null2String(function.getExportParameterList().getValue("E_MSGTX"));
+
+				if ("E".equals(result) || "A".equals(result)) {// å¦‚æœåŒ…å«Eæˆ–A åˆ™å¤±è´¥
+					request.getRequestManager().setMessageid("10000");
+					request.getRequestManager().setMessagecontent("sapè¿”å›é”™è¯¯ï¼š--- " + message);
+					return isSuccess;
+				}
 				//}
-				
-	
+
+
 				this.writeLog("FI_SAKNR_CHECKCWB_Action end --- ");
 			} catch (Exception e) {
 				this.writeLog("FI_SAKNR_CHECKCWB_Action Exception:" + e);
 				request.getRequestManager().setMessageid("10000");
-				request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£º"+e);
+				request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼š"+e);
 				return isSuccess;
 			} finally {
 				try {
@@ -90,12 +90,12 @@ public class FI_SAKNR_CHECKCWB_Action extends BaseBean implements Action {
 				} catch (Exception e) {
 					e.printStackTrace();
 					request.getRequestManager().setMessageid("10000");
-					request.getRequestManager().setMessagecontent("·µ»Ø´íÎó£ºÓëSAPÁ¬½ÓÒì³££¬ÇëÖØĞÂÌá½»Á÷³Ì£¡"+e);
+					request.getRequestManager().setMessagecontent("è¿”å›é”™è¯¯ï¼šä¸SAPè¿æ¥å¼‚å¸¸ï¼Œè¯·é‡æ–°æäº¤æµç¨‹ï¼"+e);
 					return isSuccess;
 				}
 			}
 		}
 		return isSuccess;
 	}
-	
+
 }
