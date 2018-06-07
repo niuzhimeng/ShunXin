@@ -3,6 +3,7 @@ package com.shunxinkonggu.sap.action;
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
 import com.shunxinkonggu.sap.util.SapConnectPool;
+import com.shunxinkonggu.sap.util.SapConnectPoolBatch;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
@@ -35,7 +36,7 @@ public class FI_LIFNR_CHECK_Action extends BaseBean implements Action {
             String KTOKK = "";              // 账户组
 
             RecordSet rs = null;
-            SapConnectPool connect = null;
+            SapConnectPoolBatch connect = null;
             JCO.Client client = null;
             JCO.Function function = null;
             JCO.Repository repository = null;
@@ -44,7 +45,7 @@ public class FI_LIFNR_CHECK_Action extends BaseBean implements Action {
             try {
 
                 this.writeLog("FI_LIFNR_CHECK_Action fromTable --- " + fromTable);
-                connect = new SapConnectPool();
+                connect = new SapConnectPoolBatch();
                 client = connect.getConnection();
                 repository = new JCO.Repository("sap", client);
                 ft = repository.getFunctionTemplate("ZRFC_FI_LIFNR_CHECK_B");

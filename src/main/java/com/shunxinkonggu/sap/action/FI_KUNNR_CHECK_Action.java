@@ -2,7 +2,7 @@ package com.shunxinkonggu.sap.action;
 
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.JCO;
-import com.shunxinkonggu.sap.util.SapConnectPool;
+import com.shunxinkonggu.sap.util.SapConnectPoolBatch;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
@@ -26,35 +26,44 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
         String requestid = request.getRequestid();
         String operatetype = request.getRequestManager().getSrc();
         String fromTable = request.getRequestManager().getBillTableName();
-
+        writeLog("重启了~！！！！！！！！！！");
         this.writeLog("FI_KUNNR_CHECK_Action 客户主数据 CHECK requestid --- " + requestid + "  operatetype --- " + operatetype + "   fromTable --- " + fromTable);
 
+        writeLog("进去if前====");
         if (operatetype.equals("submit")) {
-
+            writeLog("进入if后====");
             String khmc;            //客户名称
             String khzhz;              //客户帐户组
-
+            writeLog("创建对象前");
             RecordSet rs = null;
-            SapConnectPool connect = null;
+            SapConnectPoolBatch connect = null;
             JCO.Client client = null;
             JCO.Function function = null;
             JCO.Repository repository = null;
             IFunctionTemplate ft = null;
-
+            writeLog("创建对象后");
             try {
 
                 this.writeLog("FI_KUNNR_CHECK_Action fromTable --- " + fromTable);
-                connect = new SapConnectPool();
+                connect = new SapConnectPoolBatch();
+                writeLog("创建connect完成-》" + connect);
                 client = connect.getConnection();
+                writeLog("创建client完成-》" + client);
                 repository = new JCO.Repository("sap", client);
+                writeLog("创建repository完成-》" + repository);
                 ft = repository.getFunctionTemplate("ZRFC_FI_KUNNR_CHECK_B");
+                writeLog("创建ft完成-》" + ft);
                 function = new JCO.Function(ft);
+                writeLog("创建function完成-》" + function);
 
                 rs = new RecordSet();
                 rs.execute("SELECT d.* FROM " + fromTable + " m LEFT JOIN " + fromTable + "_DT1" + " d ON m.id = d.MAINID WHERE m.REQUESTID = " + requestid);
-
+                writeLog("执行sql--结束=====55=====");
                 JCO.Table table = function.getImportParameterList().getTable("IT_KUNNR");
+                writeLog("创建的table---》" + table);
+
                 int i = 0;
+                writeLog("准备执行循环====");
                 while (rs.next()) {
                     khmc = Util.null2String(rs.getString("khqc"));
                     khzhz = Util.null2String(rs.getString("accountgroup"));

@@ -1,14 +1,13 @@
 package com.shunxinkonggu.sap.util;
 
-import java.util.Properties;
-
+import com.sap.mw.jco.JCO;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
 
-import com.sap.mw.jco.JCO;
+import java.util.Properties;
 
-public class SapConnectPool extends BaseBean {
+public class SapConnectPoolBatch extends BaseBean {
 
 //	private static String client = "300";           // 客户端 测试300 正式800
 //	private static String user = "RFCUSER";          // 用户名
@@ -30,28 +29,12 @@ public class SapConnectPool extends BaseBean {
 	Properties prop = new Properties();
 
 	private static int maxconnection = 5;
-	final static String poolname = "ThePool";
-
-	//获取配置文件
-	private void getProp() {
-		RecordSet rs = new RecordSet();
-		rs.executeSql("SELECT * FROM SAP_DATASOURCE WHERE POOLNAME='SAP'");//SAPERP
-		if (rs.next()) {
-			user = Util.null2String(rs.getString("USERNAME"));
-			client = Util.null2String(rs.getString("CLIENT"));
-			passwd = Util.null2String(rs.getString("PASSWORD"));
-			lang = Util.null2String(rs.getString("LANGUAGE"));
-			ashost = Util.null2String(rs.getString("HOSTNAME"));
-			sysnr = Util.null2String(rs.getString("SYSTEMNUM"));
-			sapRouter = Util.null2String(rs.getString("SAPROUTER"));
-		}
-	}
+	final static String poolname = "ThePoolBatch";
 
 	/**
 	 * 初始化链接
 	 */
 	private void init() {
-		getProp();
 		try {
 			JCO.Pool pool = JCO.getClientPoolManager().getPool(poolname);
 			if (pool == null) {

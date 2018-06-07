@@ -1,5 +1,6 @@
 package com.shunxinkonggu.sap.action;
 
+import com.shunxinkonggu.sap.util.SapConnectPoolBatch;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
@@ -36,7 +37,7 @@ public class FI_SAKNR_CHECK_Action extends BaseBean implements Action {
             String KTOKS = "";          // 科目组
 
             RecordSet rs = new RecordSet();
-            SapConnectPool connect = null;
+            SapConnectPoolBatch connect = null;
             JCO.Client client = null;
 
             try {
@@ -45,7 +46,7 @@ public class FI_SAKNR_CHECK_Action extends BaseBean implements Action {
 
                 JCO.Function function = null;
                 JCO.Repository repository = null;
-                connect = new SapConnectPool();
+                connect = new SapConnectPoolBatch();
                 client = connect.getConnection();
                 repository = new JCO.Repository("sap", client);
                 IFunctionTemplate ft  = repository.getFunctionTemplate("ZRFC_FI_SAKNR_CHECK_B");

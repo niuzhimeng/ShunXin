@@ -1,5 +1,6 @@
 package com.shunxinkonggu.sap.action;
 
+import com.shunxinkonggu.sap.util.SapConnectPoolBatch;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
@@ -41,7 +42,7 @@ public class FI_SAKNR_Action extends BaseBean implements Action {
             String KTOPL = "";              // 账目表
 
             RecordSet rs = null;
-            SapConnectPool connect = null;
+            SapConnectPoolBatch connect = null;
             JCO.Client client = null;
             JCO.Function function = null;
             JCO.Repository repository = null;
@@ -50,7 +51,7 @@ public class FI_SAKNR_Action extends BaseBean implements Action {
 
                 this.writeLog("FI_SAKNR_Action fromTable --- " + fromTable);
 
-                connect = new SapConnectPool();
+                connect = new SapConnectPoolBatch();
                 client = connect.getConnection();
                 repository = new JCO.Repository("sap", client);
                 ft = repository.getFunctionTemplate("ZRFC_FI_SAKNR_CREATE_B");

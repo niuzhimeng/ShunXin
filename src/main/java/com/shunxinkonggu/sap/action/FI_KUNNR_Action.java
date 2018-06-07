@@ -1,5 +1,6 @@
 package com.shunxinkonggu.sap.action;
 
+import com.shunxinkonggu.sap.util.SapConnectPoolBatch;
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
 import weaver.general.Util;
@@ -41,7 +42,7 @@ public class FI_KUNNR_Action extends BaseBean implements Action {
             String STRAS = "";              // 地址街道
 
             RecordSet rs = null;
-            SapConnectPool connect = null;
+            SapConnectPoolBatch connect = null;
             JCO.Client client = null;
             JCO.Function function = null;
             JCO.Repository repository = null;
@@ -50,7 +51,7 @@ public class FI_KUNNR_Action extends BaseBean implements Action {
 
                 this.writeLog("FI_KUNNR_Action fromTable ================================= " + fromTable);
 
-                connect = new SapConnectPool();
+                connect = new SapConnectPoolBatch();
                 client = connect.getConnection();
                 //JCO.Repository类的构造函数有两个参数，第一个是可以任意指定的名字，第二个是当前使用的连接
                 repository = new JCO.Repository("sap", client);
