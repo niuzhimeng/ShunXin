@@ -10,27 +10,27 @@ import com.sap.mw.jco.JCO;
 
 public class SapConnectPool extends BaseBean {
 
-//	private static String client = "300";           // 客户端 测试300 正式800
-//	private static String user = "RFCUSER";          // 用户名
-//	private static String passwd = "sap123456";        // 密码19920706
-//	private static String lang = "ZH";              // 语言
-//	private static String ashost = "172.16.0.104";  // 服务器的主机名
-//	private static String sysnr = "00";             // 系统
-//	private static String sapRouter = "";        // SapRouter /H/saproute.shunxinholdings.com/H/
-
-    private static String client = "800";           // 客户端 测试300 正式800
-	private static String user = "RFCOA";          // 用户名
-	private static String passwd = "rfcoa2018";        // 密码19920706
+	private static String client = "300";           // 客户端 测试300 正式800
+	private static String user = "SAP-OA";          // 用户名
+	private static String passwd = "123456";        // 密码19920706
 	private static String lang = "ZH";              // 语言
-	private static String ashost = "172.16.0.102";  // 服务器的主机名
+	private static String ashost = "172.16.0.35";  // 服务器的主机名
 	private static String sysnr = "00";             // 系统
 	private static String sapRouter = "";        // SapRouter /H/saproute.shunxinholdings.com/H/
+
+//  private static String client = "800";           // 客户端 测试300 正式800
+//	private static String user = "RFCOA";          // 用户名
+//	private static String passwd = "rfcoa2018";        // 密码19920706
+//	private static String lang = "ZH";              // 语言
+//	private static String ashost = "172.16.0.102";  // 服务器的主机名
+//	private static String sysnr = "00";             // 系统
+//	private static String sapRouter = "";        // SapRouter /H/saproute.shunxinholdings.com/H/
 
 	JCO.Client connection = null;
 	Properties prop = new Properties();
 
 	private static int maxconnection = 5;
-	final static String poolname = "ThePool";
+	final static String poolname = "qjThePool";
 
 	//获取配置文件
 	private void getProp() {
@@ -51,7 +51,7 @@ public class SapConnectPool extends BaseBean {
 	 * 初始化链接
 	 */
 	private void init() {
-		getProp();
+		//getProp();
 		try {
 			JCO.Pool pool = JCO.getClientPoolManager().getPool(poolname);
 			if (pool == null) {

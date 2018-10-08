@@ -56,19 +56,17 @@ public class FI_LIFNR_CHECK_Action extends BaseBean implements Action {
                 JCO.Table table = function.getImportParameterList().getTable("IT_LIFNR");
                 int i = 0;
                 while (rs.next()) {
-                    if ("V001".equals(rs.getString("accountgroup")) || "V002".equals(rs.getString("accountgroup"))) {
-                        NAME1 = Util.null2String(rs.getString("gysqc"));
-                        KTOKK = Util.null2String(rs.getString("accountgroup"));
+                    NAME1 = Util.null2String(rs.getString("gysqc"));
+                    KTOKK = Util.null2String(rs.getString("accountgroup"));
 
-                        table.appendRow();
-                        table.setRow(i);
-                        table.setValue(NAME1, "NAME1");
-                        table.setValue(KTOKK, "KTOKK");
-                        this.writeLog("第 " + i + "行");
-                        this.writeLog("FI_LIFNR_CHECK_Action NAME1 --- " + NAME1);
-                        this.writeLog("FI_LIFNR_CHECK_Action KTOKK --- " + KTOKK);
-                        i++;
-                    }
+                    table.appendRow();
+                    table.setRow(i);
+                    table.setValue(NAME1, "NAME1");
+                    table.setValue(KTOKK, "KTOKK");
+                    this.writeLog("第 " + i + "行");
+                    this.writeLog("FI_LIFNR_CHECK_Action NAME1 --- " + NAME1);
+                    this.writeLog("FI_LIFNR_CHECK_Action KTOKK --- " + KTOKK);
+                    i++;
                 }
                 writeLog("调用SAP中。。。。。。");
                 client.execute(function);

@@ -46,13 +46,9 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
 
                 this.writeLog("FI_KUNNR_CHECK_Action fromTable --- " + fromTable);
                 connect = new SapConnectPoolBatch();
-                writeLog("创建connect完成-》" + connect);
                 client = connect.getConnection();
-                writeLog("创建client完成-》" + client);
                 repository = new JCO.Repository("sap", client);
-                writeLog("创建repository完成-》" + repository);
                 ft = repository.getFunctionTemplate("ZRFC_FI_KUNNR_CHECK_B");
-                writeLog("创建ft完成-》" + ft);
                 function = new JCO.Function(ft);
                 writeLog("创建function完成-》" + function);
 
@@ -84,10 +80,7 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
                 JCO.Table resultTable = function.getExportParameterList().getTable("ET_KUNNR");
 
                 writeLog("行客户返回check===============" + resultTable);
-                int tabLength = resultTable.getTabLength();
-                writeLog("返回长度======79" + tabLength);
                 int length = resultTable.getNumRows();
-                writeLog("81返回总行数=============" + length);
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < length; j++) {
                     resultTable.setRow(j);

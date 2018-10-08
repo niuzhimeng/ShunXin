@@ -41,12 +41,12 @@ public class FI_KUNNR_Action extends BaseBean implements Action {
 
             String STRAS = "";              // 地址街道
 
-            RecordSet rs = null;
+            RecordSet rs;
             SapConnectPoolBatch connect = null;
-            JCO.Client client = null;
-            JCO.Function function = null;
-            JCO.Repository repository = null;
-            IFunctionTemplate ft = null;
+            JCO.Client client;
+            JCO.Function function;
+            JCO.Repository repository;
+            IFunctionTemplate ft;
             try {
 
                 this.writeLog("FI_KUNNR_Action fromTable ================================= " + fromTable);
