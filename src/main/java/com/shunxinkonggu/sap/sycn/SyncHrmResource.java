@@ -209,6 +209,8 @@ public class SyncHrmResource extends BaseBean {
                 this.writeLog("synDepartment orgsuperdepcode-----" + orgsuperdepcode);
                 this.writeLog("synDepartment showorder-----" + showorder);
                 this.writeLog("synDepartment canceled-----" + canceled);
+                this.writeLog("synDepartment startTime-----" + startTime);
+                this.writeLog("synDepartment endTime-----" + endTime);
 
                 //判断是否在有效期内
                 Boolean useless = isUseless(startTime, endTime);
@@ -803,7 +805,7 @@ public class SyncHrmResource extends BaseBean {
      */
     private Boolean isUseless(String startTime, String endTime) {
         boolean flag = false;
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date start = format.parse(startTime);
             Date end = format.parse(endTime);

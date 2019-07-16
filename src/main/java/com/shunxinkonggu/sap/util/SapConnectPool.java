@@ -26,11 +26,11 @@ public class SapConnectPool extends BaseBean {
 //	private static String sysnr = "00";             // 系统
 //	private static String sapRouter = "";        // SapRouter /H/saproute.shunxinholdings.com/H/
 
-	JCO.Client connection = null;
-	Properties prop = new Properties();
+	private JCO.Client connection = null;
+	private Properties prop = new Properties();
 
-	private static int maxconnection = 5;
-	final static String poolname = "qjThePool";
+	private final static int MAX_CONNECTION = 5;
+	private final static String POOL_NAME = "qjThePool";
 
 	//获取配置文件
 	private void getProp() {
@@ -48,12 +48,12 @@ public class SapConnectPool extends BaseBean {
 	}
 
 	/**
-	 * 初始化链接
+	 * 创建连接池
 	 */
 	private void init() {
 		//getProp();
 		try {
-			JCO.Pool pool = JCO.getClientPoolManager().getPool(poolname);
+			JCO.Pool pool = JCO.getClientPoolManager().getPool(POOL_NAME);
 			if (pool == null) {
 				prop.put("jco.client.ashost", ashost);
 				prop.put("jco.client.client", client);
@@ -62,7 +62,7 @@ public class SapConnectPool extends BaseBean {
 				prop.put("jco.client.passwd", passwd);
 				prop.put("jco.client.sapRouter", sapRouter);
 				prop.put("jco.client.lang", lang);
-				JCO.addClientPool(poolname, maxconnection, prop);
+				JCO.addClientPool(POOL_NAME, MAX_CONNECTION, prop);
 			}
 		} catch (Exception e) {
 			this.writeLog("建立sap连接池异常：" + e);
@@ -70,11 +70,11 @@ public class SapConnectPool extends BaseBean {
 	}
 
 	public JCO.Client getConnection() {
-		JCO.Pool pool = JCO.getClientPoolManager().getPool(poolname);
+		JCO.Pool pool = JCO.getClientPoolManager().getPool(POOL_NAME);
 		if (pool == null) {
 			init();
 		}
-		connection = JCO.getClient(poolname);
+		connection = JCO.getClient(POOL_NAME);
 		return connection;
 	}
 
@@ -84,7 +84,7 @@ public class SapConnectPool extends BaseBean {
 	}
 
 	public static void removeConnectionPool() {
-		JCO.removeClientPool(poolname);
+		JCO.removeClientPool(POOL_NAME);
 	}
 
 }

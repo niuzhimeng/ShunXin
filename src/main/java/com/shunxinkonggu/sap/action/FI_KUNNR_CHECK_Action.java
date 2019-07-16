@@ -26,22 +26,19 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
         String requestid = request.getRequestid();
         String operatetype = request.getRequestManager().getSrc();
         String fromTable = request.getRequestManager().getBillTableName();
-        writeLog("重启了~！！！！！！！！！！");
+
         this.writeLog("FI_KUNNR_CHECK_Action 客户主数据 CHECK requestid --- " + requestid + "  operatetype --- " + operatetype + "   fromTable --- " + fromTable);
 
-        writeLog("进去if前====");
         if (operatetype.equals("submit")) {
             writeLog("进入if后====");
             String khmc;            //客户名称
             String khzhz;              //客户帐户组
-            writeLog("创建对象前");
             RecordSet rs = null;
             SapConnectPoolBatch connect = null;
             JCO.Client client = null;
             JCO.Function function = null;
             JCO.Repository repository = null;
             IFunctionTemplate ft = null;
-            writeLog("创建对象后");
             try {
 
                 this.writeLog("FI_KUNNR_CHECK_Action fromTable --- " + fromTable);
@@ -50,13 +47,10 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
                 repository = new JCO.Repository("sap", client);
                 ft = repository.getFunctionTemplate("ZRFC_FI_KUNNR_CHECK_B");
                 function = new JCO.Function(ft);
-                writeLog("创建function完成-》" + function);
 
                 rs = new RecordSet();
                 rs.execute("SELECT d.* FROM " + fromTable + " m LEFT JOIN " + fromTable + "_DT1" + " d ON m.id = d.MAINID WHERE m.REQUESTID = " + requestid);
-                writeLog("执行sql--结束=====55=====");
                 JCO.Table table = function.getImportParameterList().getTable("IT_KUNNR");
-                writeLog("创建的table---》" + table);
 
                 int i = 0;
                 writeLog("准备执行循环====");
@@ -79,7 +73,6 @@ public class FI_KUNNR_CHECK_Action extends BaseBean implements Action {
                 //处理返回数据
                 JCO.Table resultTable = function.getExportParameterList().getTable("ET_KUNNR");
 
-                writeLog("行客户返回check===============" + resultTable);
                 int length = resultTable.getNumRows();
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < length; j++) {
