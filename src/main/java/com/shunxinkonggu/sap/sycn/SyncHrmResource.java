@@ -3,6 +3,8 @@ package com.shunxinkonggu.sap.sycn;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import weaver.conn.RecordSet;
 import weaver.general.BaseBean;
@@ -88,7 +90,7 @@ public class SyncHrmResource extends BaseBean {
 
                 //判断是否在有效期内
                 Boolean useless = isUseless(startTime, endTime);
-                if(useless){
+                if (useless) {
                     continue;
                 }
 
@@ -214,7 +216,7 @@ public class SyncHrmResource extends BaseBean {
 
                 //判断是否在有效期内
                 Boolean useless = isUseless(startTime, endTime);
-                if(useless){
+                if (useless) {
                     continue;
                 }
 
@@ -555,10 +557,16 @@ public class SyncHrmResource extends BaseBean {
         RecordSet rsjiangang = new RecordSet();
         ResourceComInfo rc = null;
         HrmResourceImpl ri = null;
-        ArrayList<String> workcodeary = new ArrayList();
+        ArrayList<String> workcodeary = new ArrayList<String>();
 
         try {
-
+            RecordSet seclevelSet = new RecordSet();
+            seclevelSet.executeQuery("select id, seclevel from hrmresource");
+            // id - 安全级别map
+            Map<Integer, String> idSecMap = new HashMap<Integer, String>(seclevelSet.getCounts() + 10);
+            while (seclevelSet.next()) {
+                idSecMap.put(seclevelSet.getInt("id"), seclevelSet.getString("seclevel"));
+            }
             rc = new ResourceComInfo();
             sc = new SapConnect();
             client = sc.getConnection();
@@ -659,6 +667,10 @@ public class SyncHrmResource extends BaseBean {
                 if (id > 0 && Util.getIntValue(status) > 3) {
                     ri.deleteHrmResource5(id + "", status);
                     continue;
+                }
+                // 安全级别大于等于80 手机号置空
+                if (Util.getIntValue(idSecMap.get(id)) >= 80) {
+                    mobile = "";
                 }
 
                 String depid = "";
